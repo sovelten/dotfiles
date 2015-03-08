@@ -14,7 +14,7 @@ pcm.dmixer {
     ipc_key_add_uid 0
     ipc_perm 0666                
     slave {
-        pcm "hw:0,3"    # HDMI CARD AND DEVICE
+        pcm "hw:0,0"    # HDMI CARD AND DEVICE
         period_time 0
         period_size 1024
         buffer_size 8192
