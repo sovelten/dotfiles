@@ -1,0 +1,14 @@
+path.search=~/.wall
+config.mode=NUMBER
+wallpaper.default.image=wall_1.png
+wallpaper.default.mode=ZOOMED
+wallpaper.1.image=wall_1.png
+wallpaper.2.image=wall_2.png
+wallpaper.3.image=wall_3.png
+wallpaper.4.image=wall_4.png
+wallpaper.5.image=wall_5.png
+wallpaper.6.image=wall_6.png
+wallpaper.7.image=wall_7.png
+wallpaper.8.image=wall_8.png
+wallpaper.9.image=wall_9.png
+
