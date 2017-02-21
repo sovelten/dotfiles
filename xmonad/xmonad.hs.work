@@ -19,9 +19,9 @@ main = do
     xmproc <- spawnPipe "xmobar /home/eric/.xmobarrc"
     xmonad myConfig
         { manageHook = manageDocks <+> myManageHook
-        , terminal = "sakura"
+        , terminal = "termite"
         , layoutHook = myLayouts
-        , handleEventHook = ewmhDesktopsEventHook
+        , handleEventHook = docksEventHook <+> ewmhDesktopsEventHook
         , logHook = do
             ewmhDesktopsLogHook
             dynamicLogWithPP xmobarPP
@@ -34,8 +34,8 @@ main = do
 
 myStartupHook = do
     ewmhDesktopsStartup
-    spawnOn "9" "thunderbird"
-    spawnOn "8" "sky"
+    docksStartupHook
+    spawnOn "9" "slack"
     
 _myKeys =
 	[
@@ -43,14 +43,19 @@ _myKeys =
 	,("M-p", spawnHere "exe=`yeganesh -x` && eval \"exec $exe\"")
 	,("M-s", sendMessage ToggleStruts)
 	,("M-x", WD.changeDir P.defaultXPConfig)
-	,("M-S-t", spawn "slock")
+	,("M-S-t", spawn "xlock")
 	,("M-S-h", spawn "systemctl hibernate")
 	,("M-S-r", spawn "systemctl reboot")
+	,("<XF86AudioLowerVolume>", spawn "amixer set Master 2-")
+	,("<XF86AudioRaiseVolume>", spawn "amixer set Master 2+")
+	,("<XF86AudioMute>", spawn "amixer set Master toggle")
+	,("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
+	,("<XF86MonBrightnessDown>", spawn "xbacklight -dec 10")
 	]
 
 myConfig = EZ.additionalKeysP defaultConfig _myKeys
 
-myLayouts = avoidStrutsOn []
+myLayouts = avoidStruts
             $ smartBorders
             $ _homeDir
 
