@@ -1,0 +1,7 @@
+#!/bin/sh
+
+setxkbmap -option "" -layout "br" -option caps:swapescape
+xrandr --output DVI-I-1 --right-of DVI-I-2
+compton &
+wallpaperd
+exec xmonad

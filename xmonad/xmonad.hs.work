@@ -1,0 +1,75 @@
+import XMonad
+import XMonad.Actions.GridSelect
+import XMonad.Actions.SpawnOn
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.FadeInactive
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers
+import XMonad.Layout.NoBorders
+import qualified XMonad.Layout.Tabbed as Tab
+import qualified XMonad.Layout.WorkspaceDir as WD
+import qualified XMonad.Prompt as P
+import qualified XMonad.Util.EZConfig as EZ
+import XMonad.Util.Run(spawnPipe)
+import System.IO
+
+
+main = do
+    xmproc <- spawnPipe "xmobar /home/eric/.xmobarrc"
+    xmonad myConfig
+        { manageHook = manageDocks <+> myManageHook
+        , terminal = "termite"
+        , layoutHook = myLayouts
+        , handleEventHook = docksEventHook <+> ewmhDesktopsEventHook
+        , logHook = do
+            ewmhDesktopsLogHook
+            dynamicLogWithPP xmobarPP
+                { ppOutput = hPutStrLn xmproc
+                , ppTitle = xmobarColor "green" "" . shorten 50
+                }
+        , startupHook = myStartupHook
+        , modMask = mod1Mask
+        }
+
+myStartupHook = do
+    ewmhDesktopsStartup
+    docksStartupHook
+    spawnOn "9" "slack"
+    
+_myKeys =
+	[
+	 ("M-g", goToSelected defaultGSConfig)
+	,("M-p", spawnHere "exe=`yeganesh -x` && eval \"exec $exe\"")
+	,("M-s", sendMessage ToggleStruts)
+	,("M-x", WD.changeDir P.defaultXPConfig)
+	,("M-S-t", spawn "xlock")
+	,("M-S-h", spawn "systemctl hibernate")
+	,("M-S-r", spawn "systemctl reboot")
+	,("<XF86AudioLowerVolume>", spawn "amixer set Master 2-")
+	,("<XF86AudioRaiseVolume>", spawn "amixer set Master 2+")
+	,("<XF86AudioMute>", spawn "amixer set Master toggle")
+	,("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
+	,("<XF86MonBrightnessDown>", spawn "xbacklight -dec 10")
+	]
+
+myConfig = EZ.additionalKeysP defaultConfig _myKeys
+
+myLayouts = avoidStruts
+            $ smartBorders
+            $ _homeDir
+
+_tiled = Tall nmaster delta ratio
+    where
+        nmaster = 1
+        ratio = 1/2
+        delta = 3/100
+
+_easyLay = _tiled ||| Mirror _tiled ||| Tab.simpleTabbed
+
+_homeDir = WD.workspaceDir "/home/eric" _easyLay
+
+myManageHook :: ManageHook
+myManageHook = composeAll [ isFullscreen --> doFullFloat,
+                            className =? "trayer" --> doIgnore,
+                            manageSpawn ]
