@@ -1,1 +1,2 @@
-xrandr --output DP1 --primary --auto --output eDP1 --auto --right-of DP1
+xrandr --output DP2 --auto --output eDP1 --auto --below DP2 --output HDMI1 --auto --left-of DP2 --primary
+#xrandr --output DP2 --primary --auto --output eDP1 --auto --below DP2

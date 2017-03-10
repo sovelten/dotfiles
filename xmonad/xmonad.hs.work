@@ -6,6 +6,7 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.SetWMName
 import XMonad.Layout.NoBorders
 import qualified XMonad.Layout.Tabbed as Tab
 import qualified XMonad.Layout.WorkspaceDir as WD
@@ -33,8 +34,10 @@ main = do
         }
 
 myStartupHook = do
+    spawn "xrandr --output DP2 --auto --output eDP1 --auto --below DP2 --output HDMI1 --auto --left-of DP2 --primary"
     ewmhDesktopsStartup
     docksStartupHook
+    setWMName "LG3D"
     spawnOn "9" "slack"
     
 _myKeys =
@@ -45,10 +48,13 @@ _myKeys =
 	,("M-x", WD.changeDir P.defaultXPConfig)
 	,("M-S-t", spawn "xlock")
 	,("M-S-h", spawn "systemctl hibernate")
-	,("M-S-r", spawn "systemctl reboot")
-	,("<XF86AudioLowerVolume>", spawn "amixer set Master 2-")
-	,("<XF86AudioRaiseVolume>", spawn "amixer set Master 2+")
-	,("<XF86AudioMute>", spawn "amixer set Master toggle")
+	,("M-S-p", spawn "systemctl reboot")
+	,("<XF86AudioPlay>", spawn "playerctl play-pause")
+	,("<XF86AudioNext>", spawn "playerctl next")
+	,("<XF86AudioPrev>", spawn "playerctl previous")
+	,("<XF86AudioLowerVolume>", spawn "amixer -D pulse sset Master 5%-")
+	,("<XF86AudioRaiseVolume>", spawn "amixer -D pulse sset Master 5%+")
+	,("<XF86AudioMute>", spawn "amixer -D pulse sset Master toggle")
 	,("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
 	,("<XF86MonBrightnessDown>", spawn "xbacklight -dec 10")
 	]
