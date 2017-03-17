@@ -1,0 +1,17 @@
+Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = Top
+       , lowerOnStart = True
+       , commands = [ Run Mpris2 "spotify" ["-t", "<artist> - [<composer>] <title>"] 10
+                    , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , Run Date "%a %b %_d %H:%M" "date" 10
+                    , Run StdinReader
+                    , Run Volume "default" "Master" [] 10
+                    , Run Battery ["-L","50","-H","75","--high","green","--normal","yellow","--low", "red"] 10
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader% }{ %mpris2% | %cpu% | %memory% | %battery% | %default:Master% <fc=#ee9a00>%date%</fc>" 
+       }
