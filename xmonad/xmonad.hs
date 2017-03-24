@@ -26,7 +26,7 @@ main = do
 	systray <- spawnPipe trayer
 	xmonad myConfig {
 		terminal = myTerminal,
-		handleEventHook = ewmhDesktopsEventHook,
+		handleEventHook = docksEventHook <+> ewmhDesktopsEventHook,
 		manageHook = myManageHook,
 		layoutHook = myLayouts,
 		logHook = myLogHook leftBar >> fadeInactiveLogHook 0xdddddddd,
@@ -58,7 +58,7 @@ myLogHook h = do
                 )
         }
 
-myTerminal = "sakura"
+myTerminal = "termite"
 
 _myKeys =
 	[
@@ -99,6 +99,9 @@ myManageHook :: ManageHook
 myManageHook = composeAll [ isFullscreen --> doFullFloat,
                             manageSpawn,
                             className =? "trayer" --> doIgnore,
+                            className =? "popcorntime" --> doFloat,
                             className =? "Do" --> doIgnore ]
 
-myStartupHook = ewmhDesktopsStartup
+myStartupHook = do
+    ewmhDesktopsStartup
+    docksStartupHook
