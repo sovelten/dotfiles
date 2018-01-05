@@ -11,6 +11,7 @@ import XMonad.Layout.NoBorders
 import qualified XMonad.Layout.Tabbed as Tab
 import qualified XMonad.Layout.WorkspaceDir as WD
 import qualified XMonad.Prompt as P
+import qualified XMonad.Prompt.AppLauncher as AL
 import qualified XMonad.Util.EZConfig as EZ
 import XMonad.Util.Run(spawnPipe)
 import System.IO
@@ -34,7 +35,8 @@ main = do
         }
 
 myStartupHook = do
-    spawn "xrandr --output DP2 --auto --output eDP1 --auto --below DP2 --output HDMI1 --auto --left-of DP2 --primary"
+    spawn "xrandr --output DP2 --auto --output eDP1 --auto --below DP2 --output HDMI1 --auto --left-of DP2 --rotation right --primary"
+    spawn "setxkbmap -option '' -layout 'br,us' -option grp:shift_caps_toggle -option caps:swapescape"
     ewmhDesktopsStartup
     docksStartupHook
     setWMName "LG3D"
@@ -46,17 +48,20 @@ _myKeys =
 	,("M-p", spawnHere "exe=`yeganesh -x` && eval \"exec $exe\"")
 	,("M-s", sendMessage ToggleStruts)
 	,("M-x", WD.changeDir P.defaultXPConfig)
-	,("M-S-t", spawn "xlock")
-	,("M-S-h", spawn "systemctl hibernate")
-	,("M-S-p", spawn "systemctl reboot")
+	,("M-S-t", spawn "slock")
+	,("M-S-l", AL.launchApp def "/home/eric/.local/bin/open_project.sh")
+	,("M-S-k", AL.launchApp def "/home/eric/.local/bin/collections_console.sh")
+	--,("M-S-h", spawn "systemctl hibernate")
+	--,("M-S-p", spawn "systemctl reboot")
+	,("M-S-s", spawn "systemctl suspend")
 	,("<XF86AudioPlay>", spawn "playerctl play-pause")
 	,("<XF86AudioNext>", spawn "playerctl next")
 	,("<XF86AudioPrev>", spawn "playerctl previous")
-	,("<XF86AudioLowerVolume>", spawn "amixer -D pulse sset Master 5%-")
-	,("<XF86AudioRaiseVolume>", spawn "amixer -D pulse sset Master 5%+")
-	,("<XF86AudioMute>", spawn "amixer -D pulse sset Master toggle")
+	,("<XF86AudioLowerVolume>", spawn "amixer sset Master 5%-")
+	,("<XF86AudioRaiseVolume>", spawn "amixer sset Master 5%+")
+	,("<XF86AudioMute>", spawn "amixer sset Master toggle")
 	,("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
-	,("<XF86MonBrightnessDown>", spawn "xbacklight -dec 10")
+	,("<XF86MonBrightnessDown>", spawn "xbacklight -dec 5")
 	]
 
 myConfig = EZ.additionalKeysP defaultConfig _myKeys
