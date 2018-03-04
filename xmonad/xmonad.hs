@@ -1,6 +1,5 @@
 import XMonad
 import qualified Data.Map as M
-import Data.Either.Utils
 import System.IO
 import XMonad.Actions.GridSelect
 import XMonad.ManageHook
@@ -18,18 +17,24 @@ import qualified XMonad.Prompt as P
 import XMonad.Hooks.FadeInactive
 
 myStatusBar = "conky -c /home/eric/.xmonad/.conky_dzen | dzen2 -fn '-*-profont-*-*-*-*-11-*-*-*-*-*-iso8859' -x '220' -w '1096' -h '24' -ta 'r' -bg '#000000' -fg '#FFFFFF' -y '0'"
-myXmonadBar = "dzen2 -fn '-*-profont-*-*-*-*-11-*-*-*-*-*-iso8859' -x '1440' -y '0' -h '24' -w '220' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
+myXmonadBar = "dzen2 -fn '-*-profont-*-*-*-*-11-*-*-*-*-*-iso8859' -x '1440' -y '0' -h '24' -w '1316' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
 trayer = "trayer --edge top --widthtype pixel --align right --width 50 --heighttype pixel --height 24 --transparent true --alpha 0 --tint 0x000000 --SetPartialStrut true --SetDockType true"
 main = do
-	leftBar <- spawnPipe myXmonadBar
-	rightBar <- spawnPipe myStatusBar
+	leftBar <- spawnPipe "xmobar /home/eric/.xmobarrc"
+	--rightBar <- spawnPipe myStatusBar
 	systray <- spawnPipe trayer
 	xmonad myConfig {
 		terminal = myTerminal,
 		handleEventHook = docksEventHook <+> ewmhDesktopsEventHook,
 		manageHook = myManageHook,
 		layoutHook = myLayouts,
-		logHook = myLogHook leftBar >> fadeInactiveLogHook 0xdddddddd,
+		--logHook = myLogHook leftBar >> fadeInactiveLogHook 0xdddddddd,
+        logHook = do
+            ewmhDesktopsLogHook
+            dynamicLogWithPP xmobarPP
+                { ppOutput = hPutStrLn leftBar
+                , ppTitle = xmobarColor "green" "" . shorten 50
+                },
 		startupHook = myStartupHook	
         }
 
