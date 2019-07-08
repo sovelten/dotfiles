@@ -1,0 +1,11 @@
+[user]
+	email = eric.velten@nubank.com.br
+	name = Eric Velten de Melo
+	signingkey = C57F83326BEE53F0
+[commit]
+	gpgsign = true
+[alias]
+	co = checkout
+	br = branch
+[push]
+	default = current
