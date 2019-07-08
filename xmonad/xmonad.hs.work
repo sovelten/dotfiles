@@ -35,7 +35,7 @@ main = do
         }
 
 myStartupHook = do
-    spawn "xrandr --output DP2 --auto --output eDP1 --auto --below DP2 --output HDMI1 --auto --left-of DP2 --rotation right --primary"
+    spawn "xrandr --output DP-2 --auto --output eDP-1 --auto --below DP-2 --output HDMI-1 --auto --left-of DP-2 --rotation right --primary"
     spawn "setxkbmap -option '' -layout 'br,us' -option grp:shift_caps_toggle -option caps:swapescape"
     ewmhDesktopsStartup
     docksStartupHook
@@ -46,11 +46,14 @@ _myKeys =
 	[
 	 ("M-g", goToSelected defaultGSConfig)
 	,("M-p", spawnHere "exe=`yeganesh -x` && eval \"exec $exe\"")
+	,("M-S-r", spawn "systemctl reboot")
 	,("M-s", sendMessage ToggleStruts)
 	,("M-x", WD.changeDir P.defaultXPConfig)
-	,("M-S-t", spawn "slock")
+	,("M-S-t", spawn "i3lock -c 000000 -n")
+	--,("M-S-t", spawn "xlock")
 	,("M-S-l", AL.launchApp def "/home/eric/.local/bin/open_project.sh")
 	,("M-S-k", AL.launchApp def "/home/eric/.local/bin/collections_console.sh")
+	,("M-S-m", AL.launchApp def "/home/eric/.local/bin/credit_card_core_console.sh")
 	--,("M-S-h", spawn "systemctl hibernate")
 	--,("M-S-p", spawn "systemctl reboot")
 	,("M-S-s", spawn "systemctl suspend")
