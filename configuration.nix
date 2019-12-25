@@ -13,6 +13,8 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
+
 
   boot.initrd.luks.devices = [
     {
@@ -32,6 +34,7 @@
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.oraclejdk.accept_license = true;
 
   # Select internationalisation properties.
   i18n = {
@@ -54,25 +57,69 @@
     clojure
     compton
     docker-compose
+    emacs
+    ghc
     gitAndTools.hub
+    gmp
+    gnupg
     graphviz
     haskellPackages.xmobar
     kubectl
-    leiningen
+    (leiningen.overrideAttrs(oldAttrs: rec {
+      pname = "leiningen";
+      version = "2.8.3";
+      name = "${pname}-${version}";
+
+      src = fetchurl {
+        url = "https://raw.github.com/technomancy/leiningen/${version}/bin/lein-pkg";
+        sha256 = "1jbrm4vdvwskbi9sxvn6i7h2ih9c3nfld63nx58nblghvlcb9vwx";
+      };
+
+      jarsrc = fetchurl {
+        url = "https://github.com/technomancy/leiningen/releases/download/${version}/${name}-standalone.zip";
+        sha256 = "07kb7d84llp24l959gndnfmislnnvgpsxghmgfdy8chy7g4sy2kz";
+      };
+    }))
+    /*
+    (leiningen.overrideAttrs(oldAttrs: rec {
+      pname = "leiningen";
+      version = "2.8.1";
+      name = "${pname}-${version}";
+
+      src = fetchurl {
+        url = "https://raw.github.com/technomancy/leiningen/${version}/bin/lein-pkg";
+        sha256 = "0wk4m7m66xxx7i3nis08mc8qna7acgcmpim562vdyyrpbxdhj24i";
+      };
+
+      jarsrc = fetchurl {
+        url = "https://github.com/technomancy/leiningen/releases/download/${version}/${name}-standalone.zip";
+        sha256 = "0n3wkb0a9g25r1xq93lskay2lw210qymz2qakjnl5vr5zz3vnjgw";
+      };
+    }))
+    */
+    libu2f-host
+    idris
     nssTools
     nodejs-10_x
+    nodePackages.tern
+    python3
+    stack
+    texlive.combined.scheme-full
+    yubikey-manager
+    yubikey-personalization-gui
     vagrant
     zoom-us
   ];
 
   fonts.fonts = with pkgs; [
     google-fonts
+    dejavu_fonts
   ];
 
   #Yubikey Configuration
   services.dbus.enable = true;
   services.pcscd.enable = true;
-  services.udev.packages = [ pkgs.yubikey-personalization ];
+  services.udev.packages = [ pkgs.yubikey-personalization pkgs.libu2f-host ];
   programs.ssh.startAgent = false;
   programs.gnupg.agent = { enable = true; enableSSHSupport = true; };
   # environment.shellInit = ''
@@ -99,6 +146,7 @@
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.support32Bit = true;
 
   # Enable touchpad support.
   # services.xserver.libinput.enable = true;
@@ -110,8 +158,8 @@
   # Xmonad
   services.xserver = {
     desktopManager.default = "none";
-    desktopManager.plasma5.enable = true;
-    desktopManager.xterm.enable = false;
+    #desktopManager.plasma5.enable = true;
+    #desktopManager.xterm.enable = false;
     displayManager.sddm.enable = true;
     displayManager.sessionCommands = with pkgs; lib.mkAfter
       ''
@@ -137,7 +185,7 @@
   # Enable Java.
   programs.java = {
     enable = true;
-    package = pkgs.jdk8;
+    package = pkgs.oraclejdk8;
   };
 
   programs.light.enable = true;
@@ -148,18 +196,21 @@
 
     # Enable VirtualBox.
     virtualbox.host.enable = true;
+    virtualbox.host.enableExtensionPack = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.eric = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "docker" "vboxusers" "video"];
+    extraGroups = ["wheel" "networkmanager" "docker" "vboxusers" "audio" "video" "plugdev"];
   };
+
+  services.sshd.enable = true;
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
-  system.stateVersion = "19.03"; # Did you read the comment?
+  system.stateVersion = "19.09"; # Did you read the comment?
 
 }
