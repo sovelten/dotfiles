@@ -18,7 +18,7 @@ import System.IO
 
 
 main = do
-    xmproc <- spawnPipe "xmobar /home/eric/.xmobarrc"
+    xmproc <- spawnPipe "xmobar /home/sophia/.xmobarrc"
     xmonad myConfig
         { manageHook = manageDocks <+> myManageHook
         , terminal = "termite"
@@ -35,7 +35,7 @@ main = do
         }
 
 myStartupHook = do
-    spawn "xrandr --output DP-2 --auto --output eDP-1 --auto --below DP-2 --output HDMI-1 --auto --left-of DP-2 --rotation right --primary"
+    spawn "/home/sophia/.screenlayout/screen_home.sh"
     spawn "setxkbmap -option '' -layout 'br,us' -option grp:shift_caps_toggle -option caps:swapescape"
     ewmhDesktopsStartup
     docksStartupHook
@@ -46,14 +46,13 @@ _myKeys =
 	[
 	 ("M-g", goToSelected defaultGSConfig)
 	,("M-p", spawnHere "exe=`yeganesh -x` && eval \"exec $exe\"")
-	,("M-S-r", spawn "systemctl reboot")
 	,("M-s", sendMessage ToggleStruts)
 	,("M-x", WD.changeDir P.defaultXPConfig)
 	,("M-S-t", spawn "i3lock -c 000000 -n")
 	--,("M-S-t", spawn "xlock")
-	,("M-S-l", AL.launchApp def "/home/eric/.local/bin/open_project.sh")
-	,("M-S-k", AL.launchApp def "/home/eric/.local/bin/collections_console.sh")
-	,("M-S-m", AL.launchApp def "/home/eric/.local/bin/credit_card_core_console.sh")
+	,("M-S-l", AL.launchApp def "/home/sophia/.local/bin/open_project.sh")
+	,("M-S-k", AL.launchApp def "/home/sophia/.local/bin/collections_console.sh")
+	,("M-S-m", AL.launchApp def "/home/sophia/.local/bin/credit_card_core_console.sh")
 	--,("M-S-h", spawn "systemctl hibernate")
 	--,("M-S-p", spawn "systemctl reboot")
 	,("M-S-s", spawn "systemctl suspend")
@@ -63,8 +62,8 @@ _myKeys =
 	,("<XF86AudioLowerVolume>", spawn "amixer sset Master 5%-")
 	,("<XF86AudioRaiseVolume>", spawn "amixer sset Master 5%+")
 	,("<XF86AudioMute>", spawn "amixer sset Master toggle")
-	,("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
-	,("<XF86MonBrightnessDown>", spawn "xbacklight -dec 5")
+	,("<XF86MonBrightnessUp>", spawn "light -A 10")
+	,("<XF86MonBrightnessDown>", spawn "light -U 10")
 	]
 
 myConfig = EZ.additionalKeysP defaultConfig _myKeys
@@ -81,7 +80,7 @@ _tiled = Tall nmaster delta ratio
 
 _easyLay = _tiled ||| Mirror _tiled ||| Tab.simpleTabbed
 
-_homeDir = WD.workspaceDir "/home/eric" _easyLay
+_homeDir = WD.workspaceDir "/home/sophia" _easyLay
 
 myManageHook :: ManageHook
 myManageHook = composeAll [ isFullscreen --> doFullFloat,
