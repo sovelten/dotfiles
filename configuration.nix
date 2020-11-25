@@ -10,20 +10,25 @@
       ./hardware-configuration.nix
     ];
 
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nubank/nixpkgs/archive/master.tar.gz;
+    }))
+  ];
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
 
 
-  boot.initrd.luks.devices = [
-    {
-      name = "root";
+  boot.initrd.luks.devices = {
+    root = {
       device = "/dev/disk/by-uuid/dce4bf35-3a62-46cc-b57e-260d7b288956";
       preLVM = true;
       allowDiscards = true;
-    }
-  ];
+    };
+  };
 
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -37,11 +42,11 @@
   nixpkgs.config.oraclejdk.accept_license = true;
 
   # Select internationalisation properties.
-  i18n = {
-    consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "us";
-    defaultLocale = "pt_BR.UTF-8";
+  console = {
+    font = "Lat2-Terminus16";
+    keyMap = "us";
   };
+  i18n.defaultLocale = "pt_BR.UTF-8";
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -52,17 +57,21 @@
   #   wget vim
   # ];
   environment.systemPackages = with pkgs; [
+    arandr
     apacheKafka
     awscli
     clojure
     compton
+    dmenu
     docker-compose
     emacs
     ghc
+    git
     gitAndTools.hub
     gmp
     gnupg
     graphviz
+    haskellPackages.yeganesh
     haskellPackages.xmobar
     kubectl
     (leiningen.overrideAttrs(oldAttrs: rec {
@@ -102,14 +111,16 @@
     nssTools
     nodejs-10_x
     nodePackages.tern
+    playerctl
     python3
     stack
+    termite
     texlive.combined.scheme-full
     yubikey-manager
     yubikey-personalization-gui
     vagrant
     zoom-us
-  ];
+  ] ++ nubank.all-tools;
 
   fonts.fonts = with pkgs; [
     google-fonts
@@ -157,7 +168,7 @@
 
   # Xmonad
   services.xserver = {
-    desktopManager.default = "none";
+    displayManager.defaultSession = "none+xmonad";
     #desktopManager.plasma5.enable = true;
     #desktopManager.xterm.enable = false;
     displayManager.sddm.enable = true;
@@ -169,7 +180,6 @@
     enable = true;
     layout = "br,us";
     libinput.enable = true;
-    windowManager.default = "xmonad";
     windowManager.xmonad = {
       enable = true;
       enableContribAndExtras = true;
@@ -185,7 +195,7 @@
   # Enable Java.
   programs.java = {
     enable = true;
-    package = pkgs.oraclejdk8;
+    package = pkgs.openjdk11;
   };
 
   programs.light.enable = true;
@@ -196,13 +206,19 @@
 
     # Enable VirtualBox.
     virtualbox.host.enable = true;
-    virtualbox.host.enableExtensionPack = true;
+    #virtualbox.host.enableExtensionPack = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.eric = {
+  users.users.sophia = {
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager" "docker" "vboxusers" "audio" "video" "plugdev"];
+  };
+
+  nixpkgs.config.packageOverrides = pkgs: {
+    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      inherit pkgs;
+    };
   };
 
   services.sshd.enable = true;
