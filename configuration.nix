@@ -114,8 +114,11 @@
     playerctl
     python3
     stack
+    stalonetray
     termite
     texlive.combined.scheme-full
+    texstudio
+    unzip
     yubikey-manager
     yubikey-personalization-gui
     vagrant
@@ -191,6 +194,9 @@
     };
    xkbOptions = "grp:shift_caps_toggle caps:swapescape";
   };
+
+  # Network Manager
+  programs.nm-applet.enable = true;
 
   # Enable Java.
   programs.java = {
