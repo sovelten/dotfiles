@@ -73,7 +73,10 @@
     graphviz
     haskellPackages.yeganesh
     haskellPackages.xmobar
+    i3lock
     kubectl
+    leiningen
+    /*
     (leiningen.overrideAttrs(oldAttrs: rec {
       pname = "leiningen";
       version = "2.8.3";
@@ -89,30 +92,17 @@
         sha256 = "07kb7d84llp24l959gndnfmislnnvgpsxghmgfdy8chy7g4sy2kz";
       };
     }))
-    /*
-    (leiningen.overrideAttrs(oldAttrs: rec {
-      pname = "leiningen";
-      version = "2.8.1";
-      name = "${pname}-${version}";
-
-      src = fetchurl {
-        url = "https://raw.github.com/technomancy/leiningen/${version}/bin/lein-pkg";
-        sha256 = "0wk4m7m66xxx7i3nis08mc8qna7acgcmpim562vdyyrpbxdhj24i";
-      };
-
-      jarsrc = fetchurl {
-        url = "https://github.com/technomancy/leiningen/releases/download/${version}/${name}-standalone.zip";
-        sha256 = "0n3wkb0a9g25r1xq93lskay2lw210qymz2qakjnl5vr5zz3vnjgw";
-      };
-    }))
     */
     libu2f-host
     idris
+    jupyter
     nssTools
     nodejs-10_x
     nodePackages.tern
+    pcmanfm
     playerctl
     python3
+    spotify
     stack
     stalonetray
     termite
