@@ -19,7 +19,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
+  #boot.extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
 
 
   boot.initrd.luks.devices = {
@@ -70,6 +70,7 @@
     gitAndTools.hub
     gmp
     gnupg
+    google-cloud-sdk
     graphviz
     haskellPackages.yeganesh
     haskellPackages.xmobar
@@ -96,18 +97,21 @@
     libu2f-host
     idris
     jupyter
+    maven
     nssTools
     nodejs-10_x
     nodePackages.tern
     pcmanfm
     playerctl
     python3
+    solaar
     spotify
     stack
     stalonetray
     termite
-    texlive.combined.scheme-full
-    texstudio
+    #texlive.combined.scheme-full
+    #texstudio
+    unrar
     unzip
     yubikey-manager
     yubikey-personalization-gui
@@ -151,6 +155,9 @@
   sound.enable = true;
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
+  
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
 
   # Enable touchpad support.
   # services.xserver.libinput.enable = true;
@@ -163,14 +170,16 @@
   services.xserver = {
     displayManager.defaultSession = "none+xmonad";
     #desktopManager.plasma5.enable = true;
-    #desktopManager.xterm.enable = false;
-    displayManager.sddm.enable = true;
+    desktopManager.gnome.enable = true;
+    desktopManager.xterm.enable = true;
+    displayManager.gdm.enable = true;
     displayManager.sessionCommands = with pkgs; lib.mkAfter
       ''
       xsetroot -cursor_name left_ptr
       compton &
       '';
     enable = true;
+    autorun = true;
     layout = "br,us";
     libinput.enable = true;
     windowManager.xmonad = {
