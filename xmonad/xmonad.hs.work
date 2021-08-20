@@ -35,7 +35,7 @@ main = do
         }
 
 myStartupHook = do
-    spawn "/home/sophia/.screenlayout/screen_home.sh"
+    spawn "/home/sophia/.screenlayout/screen.sh"
     spawn "setxkbmap -option '' -layout 'br,us' -option grp:shift_caps_toggle -option caps:swapescape"
     ewmhDesktopsStartup
     docksStartupHook

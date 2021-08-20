@@ -109,8 +109,8 @@
     stack
     stalonetray
     termite
-    #texlive.combined.scheme-full
-    #texstudio
+    texlive.combined.scheme-full
+    texstudio
     unrar
     unzip
     yubikey-manager
