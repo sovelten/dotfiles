@@ -4,6 +4,9 @@
 
 { config, pkgs, ... }:
 
+let
+  wallpaperd = pkgs.callPackage /home/sophia/wallpaperd/default.nix {};
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -53,18 +56,15 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  # environment.systemPackages = with pkgs; [
-  #   wget vim
-  # ];
   environment.systemPackages = with pkgs; [
     arandr
     apacheKafka
     awscli
-    clojure
     compton
     dmenu
     docker-compose
     emacs
+    gh
     ghc
     git
     gitAndTools.hub
@@ -76,7 +76,6 @@
     haskellPackages.xmobar
     i3lock
     kubectl
-    leiningen
     /*
     (leiningen.overrideAttrs(oldAttrs: rec {
       pname = "leiningen";
@@ -96,14 +95,14 @@
     */
     libu2f-host
     idris
-    jupyter
     maven
+    nix-prefetch-scripts
     nssTools
     nodejs-10_x
     nodePackages.tern
+    ntfs3g
     pcmanfm
     playerctl
-    python3
     solaar
     spotify
     stack
@@ -113,6 +112,7 @@
     texstudio
     unrar
     unzip
+    wallpaperd
     yubikey-manager
     yubikey-personalization-gui
     vagrant
@@ -176,6 +176,7 @@
     displayManager.sessionCommands = with pkgs; lib.mkAfter
       ''
       xsetroot -cursor_name left_ptr
+      wallpaperd
       compton &
       '';
     enable = true;
