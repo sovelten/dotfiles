@@ -43,6 +43,10 @@ in
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.oraclejdk.accept_license = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "nodejs-10.24.1" 
+    "electron-13.6.9"
+  ];
 
   # Select internationalisation properties.
   console = {
@@ -54,6 +58,7 @@ in
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
 
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -63,7 +68,9 @@ in
     compton
     dmenu
     docker-compose
+    dropbox-cli
     emacs
+    foliate
     gh
     ghc
     git
@@ -93,8 +100,10 @@ in
       };
     }))
     */
+    logseq
     libu2f-host
     idris
+    gnumake
     maven
     nix-prefetch-scripts
     nssTools
@@ -103,6 +112,7 @@ in
     ntfs3g
     pcmanfm
     playerctl
+    racket
     solaar
     spotify
     stack
@@ -117,6 +127,7 @@ in
     yubikey-personalization-gui
     vagrant
     zoom-us
+    zotero
   ] ++ nubank.all-tools;
 
   fonts.fonts = with pkgs; [
