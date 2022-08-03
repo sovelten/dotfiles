@@ -47,18 +47,24 @@
 (use-package general
   :ensure t
   :config (general-define-key "C-'" 'avy-goto-word-1))
+
 (use-package avy
   :ensure t
   :commands (avy-goto-word-1))
-(use-package which-key :ensure t)
+
+(use-package which-key
+  :ensure t
+  :config (which-key-mode))
+
+(use-package flx :ensure t)
 (use-package ivy :ensure t)
 (use-package counsel :ensure t)
 (use-package swiper :ensure t)   
 (use-package hydra :ensure t)   
+
 (use-package evil
   :ensure t
   :config (evil-mode))
-(use-package which-key :ensure t)
 
 ;; Projects
 
@@ -68,6 +74,8 @@
   :bind (:map projectile-mode-map
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map)))
+
+(use-package counsel-projectile :ensure t)
 
 (use-package treemacs
   :defer t
@@ -94,7 +102,22 @@
   :defer t
   :ensure t)
 
+(use-package lispy
+  :defer t
+  :ensure t)
+
+(use-package lispyville
+  :defer t
+  :ensure t
+  :init (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) #'lispyville-mode))
+
 (use-package cider
+  :defer t
+  :ensure t)
+
+;; LSP
+
+(use-package company
   :defer t
   :ensure t)
 
@@ -114,6 +137,12 @@
   :defer t
   :ensure t)
 
+;; Themes
+
+(use-package solarized-theme
+  :ensure t
+  :config (load-theme 'solarized-dark))
+
 ;; Key Bindings
 
 (general-define-key
@@ -132,7 +161,7 @@
   "wh"  '(windmove-left :which-key "move left")
   "wk"  '(windmove-up :which-key "move up")
   "wj"  '(windmove-down :which-key "move bottom")
-  "w/"  '(split-window-right :which-key "split right")
+  "wv"  '(split-window-right :which-key "split right")
   "w-"  '(split-window-below :which-key "split bottom")
   "wd"  '(delete-window :which-key "delete window")
   ;; Others
@@ -141,32 +170,33 @@
   "fy"  '(camdez/show-buffer-file-name :which-key "copy path of buffer to clipboard")
   "gl"  '(git-link :which-key "open code in github")
   ;; projectile
-  "pp"  '(projectile-switch-project :which-key "find project")
-  "pf"  '(projectile-find-file :which-key "fuzzy search find file")
+  "pc"  '(counsel-projectile :which-key "Jump to a project buffer or file, or switch project")
+  "pp"  '(counsel-projectile-switch-project :which-key "find project")
+  "pf"  '(counsel-projectile-find-file :which-key "fuzzy search find file")
   "ps"  '(counsel-ag :which-key "fuzzy search in project")
-  "pb"  '(projectile-switch-to-buffer :which-key "find buffer")
+  "pb"  '(counsel-projectile-switch-to-buffer :which-key "find buffer")
   "pk"  '(projectile-kill-buffers :which-key "kill buffers")
   "pt"  '(treemacs :which-key "show tree")
   ;; search
   "ss"  '(swiper-isearch :which-key "search")
   ;; clojure
-  "c;"  '(cider-jack-in :which-key "create cider repl")
-  "cc"  '(cider-connect :which-key "connect to repl")
-  "cl"  '(cider-load-buffer :which-key "load current buffer into repl")
-  "cs"  '(cider-switch-to-repl-buffer :which-key "switch to repl")
-  "ch"  '(cider-doc :which-key "get doc of clojure var")
-  "cg"  '(cider-find-var :which-key "go to definition of clojure var")
-  "ta"  '(cider-test-run-ns-tests :which-key "run all tests ns")
-  "tt"  '(cider-test-run-test :which-key "run test at point")
+  "ra"  '(cider-test-run-ns-tests :which-key "run all tests ns")
+  "rc"  '(cider-connect :which-key "connect to repl")
+  "rd"  '(cider-doc :which-key "get doc of clojure var")
+  "rg"  '(cider-find-var :which-key "go to definition of clojure var")
+  "ri"  '(cider-jack-in :which-key "create cider repl")
+  "rl"  '(cider-load-buffer :which-key "load current buffer into repl")
+  "rn"  '(cider-repl-set-ns :which-key "set repl to current ns")
+  "rs"  '(cider-switch-to-repl-buffer :which-key "switch to repl")
+  "rt"  '(cider-test-run-test :which-key "run test at point")
   ;; org mode
   "oy" '(org-download-screenshot :which-key "takes a screenshot and adds it to the org document")
   "oY" '(org-download-yank :which-key "gets an image url and adds it to the org document")
   "onl" '(org-roam-buffer-toggle :which-key "shows the backlinks for the org roam node")
   "onf" '(org-roam-node-find :which-key "finds or creates a new org roam node")
   "oni" '(org-roam-node-insert :which-key "inserts a new org roam node into the document")
-  "oc" '(completion-at-point :which-key "autocompletes to org roam nodes")
+  "oc" '(completion-at-point :which-key "autocompletes to org roam nodes"))
 
-  ;; nubank
-  ;; https://github.com/nubank/nudev/blob/master/ides/emacs/nu.el
-
-  )
+(general-define-key
+ "C-=" '(text-scale-increase :which-key "Increase buffer font size")
+ "C--" '(text-scale-decrease :which-key "Decrease buffer font size"))
