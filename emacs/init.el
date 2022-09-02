@@ -57,7 +57,13 @@
   :config (which-key-mode))
 
 (use-package flx :ensure t)
-(use-package ivy :ensure t)
+
+(use-package ivy
+  :ensure t
+  :config
+  (setq ivy-re-builders-alist
+	'((t . ivy--regex-fuzzy))))
+
 (use-package counsel :ensure t)
 (use-package swiper :ensure t)   
 (use-package hydra :ensure t)   
@@ -77,6 +83,8 @@
 
 (use-package counsel-projectile :ensure t)
 
+;; Treemacs
+
 (use-package treemacs
   :defer t
   :ensure t
@@ -93,7 +101,6 @@
 (use-package treemacs-projectile
   :defer t
   :ensure t
-  :commands treemacs
   :after (treemacs projectile))
 
 ;; Clojure
@@ -104,7 +111,8 @@
 
 (use-package lispy
   :defer t
-  :ensure t)
+  :ensure t
+  :config (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1))))
 
 (use-package lispyville
   :defer t
@@ -135,7 +143,8 @@
 
 (use-package lsp-treemacs
   :defer t
-  :ensure t)
+  :ensure t
+  :config (lsp-treemacs-sync-mode 1))
 
 ;; Themes
 
@@ -144,6 +153,9 @@
   :config (load-theme 'solarized-dark))
 
 ;; Key Bindings
+
+(setq  x-meta-keysym 'super
+       x-super-keysym 'meta)
 
 (general-define-key
   :states '(normal visual insert emacs)
