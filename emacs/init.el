@@ -112,12 +112,18 @@
 (use-package lispy
   :defer t
   :ensure t
-  :config (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1))))
+  :hook ((clojure-mode . lispy-mode)
+	 (emacs-lisp-mode . lispy-mode)))
 
 (use-package lispyville
   :defer t
   :ensure t
-  :init (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) #'lispyville-mode))
+  :hook (lispy-mode . lispyville-mode)
+  ;; :init (general-add-hook 'lispy-mode-hook #'lispyville-mode)
+  :config (lispyville-set-key-theme
+	   '(operators
+	     C-w
+	     slurp/barf-lispy)))
 
 (use-package cider
   :defer t
