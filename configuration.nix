@@ -63,14 +63,14 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     arandr
-    apacheKafka
-    awscli
     compton
+    chromium
     dmenu
     docker-compose
     dropbox-cli
     emacs
     foliate
+    firefox
     gh
     ghc
     git
@@ -82,37 +82,17 @@ in
     haskellPackages.yeganesh
     haskellPackages.xmobar
     i3lock
-    kubectl
-    /*
-    (leiningen.overrideAttrs(oldAttrs: rec {
-      pname = "leiningen";
-      version = "2.8.3";
-      name = "${pname}-${version}";
-
-      src = fetchurl {
-        url = "https://raw.github.com/technomancy/leiningen/${version}/bin/lein-pkg";
-        sha256 = "1jbrm4vdvwskbi9sxvn6i7h2ih9c3nfld63nx58nblghvlcb9vwx";
-      };
-
-      jarsrc = fetchurl {
-        url = "https://github.com/technomancy/leiningen/releases/download/${version}/${name}-standalone.zip";
-        sha256 = "07kb7d84llp24l959gndnfmislnnvgpsxghmgfdy8chy7g4sy2kz";
-      };
-    }))
-    */
-    logseq
     libu2f-host
     idris
     gnumake
     maven
     nix-prefetch-scripts
-    nssTools
-    nodejs-10_x
-    nodePackages.tern
     ntfs3g
     pcmanfm
     playerctl
+    qdirstat
     racket
+    (sbt.override { jre = pkgs.jdk11; })
     solaar
     spotify
     stack
@@ -127,7 +107,6 @@ in
     yubikey-personalization-gui
     vagrant
     zoom-us
-    zotero
   ] ++ nubank.all-tools;
 
   fonts.fonts = with pkgs; [
@@ -212,7 +191,7 @@ in
   # Enable Java.
   programs.java = {
     enable = true;
-    package = pkgs.openjdk11;
+    package = pkgs.openjdk17;
   };
 
   programs.light.enable = true;
