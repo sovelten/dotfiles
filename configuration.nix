@@ -4,6 +4,7 @@
 
 { config, pkgs, ... }:
 
+
 let
   wallpaperd = pkgs.callPackage /home/sophia/wallpaperd/default.nix {};
 in
@@ -42,10 +43,11 @@ in
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   nixpkgs.config.allowUnfree = true;
+  #nixpkgs.config.allowBroken = true;
   nixpkgs.config.oraclejdk.accept_license = true;
   nixpkgs.config.permittedInsecurePackages = [
     "nodejs-10.24.1" 
-    "electron-13.6.9"
+    "electron-25.9.0"
   ];
 
   # Select internationalisation properties.
@@ -58,58 +60,74 @@ in
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
 
+  services.globalprotect = {
+    enable = true;
+    csdWrapper = "${pkgs.openconnect}/libexec/openconnect/hipreport.sh";
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     arandr
-    compton
+    awscli
     chromium
+    clojure
+    clojure-lsp
+    kubectl
     dmenu
     docker-compose
     dropbox-cli
     emacs
-    foliate
     firefox
+    flameshot
+    foliate
     gh
     ghc
     git
     gitAndTools.hub
+    globalprotect-openconnect
     gmp
     gnupg
     google-cloud-sdk
     graphviz
-    haskellPackages.yeganesh
     haskellPackages.xmobar
+    haskellPackages.yeganesh
     i3lock
+    (leiningen.override { jdk = pkgs.openjdk21; })
     libu2f-host
-    idris
+    logseq
+    lsof
     gnumake
+    google-chrome
     maven
     nix-prefetch-scripts
+    nssTools
     ntfs3g
+    openssl
     pcmanfm
+    picom #replaces compton
     playerctl
+    python3
     qdirstat
     racket
+    ripgrep
     (sbt.override { jre = pkgs.jdk11; })
+    slack
     solaar
     spotify
     stack
     stalonetray
     termite
-    texlive.combined.scheme-full
-    texstudio
     unrar
     unzip
-    wallpaperd
     yubikey-manager
     yubikey-personalization-gui
     vagrant
+    xmlstarlet # Required for aws cred refresh
     zoom-us
-  ] ++ nubank.all-tools;
+  ];
 
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     google-fonts
     dejavu_fonts
   ];
@@ -136,10 +154,29 @@ in
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [ 17500 ]; # For Dropbox
+  networking.firewall.allowedUDPPorts = [ 17500 ]; # For Dropbox
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+  
+  ## Configure dropbox daemon
+  systemd.user.services.dropbox = {
+    description = "Dropbox";
+    wantedBy = [ "graphical-session.target" ];
+    environment = {
+      QT_PLUGIN_PATH = "/run/current-system/sw/" + pkgs.qt5.qtbase.qtPluginPrefix;
+      QML2_IMPORT_PATH = "/run/current-system/sw/" + pkgs.qt5.qtbase.qtQmlPrefix;
+    };
+    serviceConfig = {
+      ExecStart = "${pkgs.dropbox.out}/bin/dropbox";
+      ExecReload = "${pkgs.coreutils.out}/bin/kill -HUP $MAINPID";
+      KillMode = "control-group"; # upstream recommends process
+      Restart = "on-failure";
+      PrivateTmp = true;
+      ProtectSystem = "full";
+      Nice = 10;
+    };
+  };
 
   # Enable sound.
   sound.enable = true;
@@ -158,32 +195,36 @@ in
 
   # Xmonad
   services.xserver = {
+    enable = true;
     displayManager.defaultSession = "none+xmonad";
+
+    # required for XRDP remote desktop
+    #displayManager.sddm.enable = true;
     #desktopManager.plasma5.enable = true;
+
     desktopManager.gnome.enable = true;
     desktopManager.xterm.enable = true;
     displayManager.gdm.enable = true;
     displayManager.sessionCommands = with pkgs; lib.mkAfter
       ''
       xsetroot -cursor_name left_ptr
-      wallpaperd
       compton &
       '';
-    enable = true;
     autorun = true;
     layout = "br,us";
     libinput.enable = true;
     windowManager.xmonad = {
       enable = true;
       enableContribAndExtras = true;
-      extraPackages = haskellPackages: [
-        haskellPackages.xmonad
-        haskellPackages.xmonad-contrib
-        haskellPackages.xmonad-extras
-      ];
-    };
+      enableConfiguredRecompile = true;
+     };
    xkbOptions = "grp:shift_caps_toggle caps:swapescape";
   };
+
+  #XRDP Support
+  #services.xrdp.enable = true;
+  #services.xrdp.defaultWindowManager = "startplasma-x11";
+  #services.xrdp.openFirewall = true;
 
   # Network Manager
   programs.nm-applet.enable = true;
@@ -191,7 +232,7 @@ in
   # Enable Java.
   programs.java = {
     enable = true;
-    package = pkgs.openjdk17;
+    package = pkgs.openjdk21;
   };
 
   programs.light.enable = true;
@@ -218,6 +259,8 @@ in
   };
 
   services.sshd.enable = true;
+  system.autoUpgrade.enable = false;
+  system.autoUpgrade.allowReboot = false;
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
