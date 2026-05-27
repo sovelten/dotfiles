@@ -1,0 +1,34 @@
+* {
+  border: none;
+  border-radius: 0;
+  font-family: JetBrainsMono Nerd Font;
+  font-size: 14px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: rgba(20, 20, 20, 0.9);
+  color: white;
+}
+
+#workspaces button {
+  padding: 0 8px;
+  color: #888;
+}
+
+#workspaces button.active {
+  color: white;
+  background: #444;
+}
+
+#clock,
+#battery,
+#network,
+#pulseaudio {
+  padding: 0 10px;
+}
+
+#custom-spotify {
+  color: #1db954; /* Spotify green */
+  padding: 0 10px;
+}
