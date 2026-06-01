@@ -1,0 +1,15 @@
+
+;;; The following lines added by ql:add-to-init-file:
+#-quicklisp
+(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+                                       (user-homedir-pathname))))
+  (when (probe-file quicklisp-init)
+    (load quicklisp-init)))
+
+#+asdf (require :asdf)
+(ql:quickload :cffi :silent t)
+(pushnew (merge-pathnames ".nix-profile/lib/" (user-homedir-pathname))
+         cffi:*foreign-library-directories*)
+
+(pushnew (merge-pathnames "/run/current-system/sw/lib/" (user-homedir-pathname))
+         cffi:*foreign-library-directories*)
