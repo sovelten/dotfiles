@@ -13,6 +13,7 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot.configurationLimit = 3;
 
   # Use latest kernel.
   # boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -57,10 +58,10 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
-  services.xserver.displayManager.gdm.wayland = true;
+  services.displayManager.gdm.wayland = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -91,6 +92,14 @@
     user = "sophia";
     group = "media";
     dataDir = "/home/sophia/sonarr";
+  };
+
+  services.radarr = {
+    enable = true;
+    openFirewall = true;
+    user = "sophia";
+    group = "media";
+    dataDir = "/home/sophia/radarr";
   };
 
   services.prowlarr = {
@@ -134,9 +143,18 @@
   programs.firefox.enable = true;
 
   programs.hyprland.enable = true; # enable Hyprland
+  
+  programs.steam.enable = true;
+
+  services.rustdesk-server = {
+    enable = true;
+    openFirewall = true;
+    signal.relayHosts = ["192.168.0.68"];
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [ "electron-39.8.10" ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -145,6 +163,7 @@
   programs.nix-ld.libraries = with pkgs; [
     # Add any missing dynamic libraries for unpackaged programs
     # here, NOT in environment.systemPackages
+    openssl
   ];
 
 environment.systemPackages = let
@@ -164,17 +183,22 @@ in with pkgs; [
     jellyfin-web
     kitty
     unstable.koboldcpp
-    lmstudio
-    (unstable.logseq)
+    (unstable.llama-cpp.override {cudaSupport = true;})
+    logseq
     nodejs
     nodePackages."@astrojs/language-server"
     (unstable.ollama.override {acceleration = "cuda";})
+    openssl
+    openssl.dev
+    openssl.out
     pciutils
     playerctl
     ripgrep
+    roswell
     sbcl
     spotify
-    steam-run
+    steam-run-free
+    tintin
     qbittorrent
     unzip
     vim 
