@@ -35,6 +35,9 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = with pkgs; [
+    networkmanager-fortisslvpn
+  ];
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -60,8 +63,6 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
-
-  services.displayManager.gdm.wayland = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -185,9 +186,11 @@ in with pkgs; [
     unstable.koboldcpp
     (unstable.llama-cpp.override {cudaSupport = true;})
     logseq
+    networkmanagerapplet
     nodejs
-    nodePackages."@astrojs/language-server"
     (unstable.ollama.override {acceleration = "cuda";})
+    openconnect
+    openfortivpn
     openssl
     openssl.dev
     openssl.out
@@ -204,12 +207,14 @@ in with pkgs; [
     vim 
     waybar
     wofi
+    zotero
   ];
 
   networking.firewall = {
     allowedTCPPorts = [ 17500 ]; # For dropbox
     allowedUDPPorts = [ 17500 ]; # For dropbox
   };
+
 
   systemd.user.services.dropbox = {
     description = "Dropbox";
@@ -228,6 +233,8 @@ in with pkgs; [
       Nice = 10;
     };
   };
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
