@@ -183,12 +183,12 @@ in with pkgs; [
     jellyfin-ffmpeg
     jellyfin-web
     kitty
-    unstable.koboldcpp
-    (unstable.llama-cpp.override {cudaSupport = true;})
+    #unstable.koboldcpp
+    #(unstable.llama-cpp.override {cudaSupport = true;})
     logseq
     networkmanagerapplet
     nodejs
-    (unstable.ollama.override {acceleration = "cuda";})
+    #(unstable.ollama.override {acceleration = "cuda";})
     openconnect
     openfortivpn
     openssl
@@ -199,13 +199,16 @@ in with pkgs; [
     ripgrep
     roswell
     sbcl
+    sqlite
     spotify
     steam-run-free
-    tintin
+    kotatogram-desktop
+    unstable.tintin
     qbittorrent
     unzip
     vim 
     waybar
+    wget
     wofi
     zotero
   ];
