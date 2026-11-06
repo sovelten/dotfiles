@@ -108,6 +108,16 @@
     openFirewall = true;
   };
 
+  systemd.services.sonarr.serviceConfig = {
+    ProtectHome = pkgs.lib.mkForce false;
+    PrivateUsers = pkgs.lib.mkForce false;
+  };
+
+  systemd.services.radarr.serviceConfig = {
+    ProtectHome = pkgs.lib.mkForce false;
+    PrivateUsers = pkgs.lib.mkForce false;
+  };
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
@@ -169,9 +179,25 @@
 
 environment.systemPackages = let
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+  tex = pkgs.texliveBasic.withPackages (ps: with ps; [
+    collection-luatex
+    collection-latexrecommended   # babel, fontspec-related deps, csquotes, etc.
+    collection-langgreek          # babel-greek, hyphen-greek, ancient greek, greek fonts
+    collection-langportuguese     # babel-portuges + hyphenation
+    collection-fontsrecommended   # lm, lm-math and friends
+    newcomputermodern
+    biblatex
+    biber
+    csquotes
+    glossaries
+    glossaries-extra
+    latexmk
+    xindy
+  ]);
 in with pkgs; [
     astro-language-server
     busybox
+    chromium
     curl
     dropbox-cli
     emacs
@@ -179,6 +205,7 @@ in with pkgs; [
     git
     hyprlauncher
     hyprpaper
+    hyprshot
     jellyfin
     jellyfin-ffmpeg
     jellyfin-web
@@ -196,6 +223,7 @@ in with pkgs; [
     openssl.out
     pciutils
     playerctl
+    python3
     ripgrep
     roswell
     sbcl
@@ -204,13 +232,20 @@ in with pkgs; [
     steam-run-free
     kotatogram-desktop
     unstable.tintin
+    unstable.unison-ucm
     qbittorrent
+    tex
+    texstudio
     unzip
     vim 
     waybar
     wget
     wofi
     zotero
+  ];
+
+  fonts.packages = with pkgs; [
+    gentium
   ];
 
   networking.firewall = {
@@ -236,6 +271,21 @@ in with pkgs; [
       Nice = 10;
     };
   };
+
+virtualisation.docker = {
+  # Consider disabling the system wide Docker daemon
+  enable = false;
+
+  rootless = {
+    enable = true;
+    setSocketVariable = true;
+    # Optionally customize rootless Docker daemon settings
+    daemon.settings = {
+      dns = [ "1.1.1.1" "8.8.8.8" ];
+      registry-mirrors = [ "https://mirror.gcr.io" ];
+    };
+  };
+};
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
